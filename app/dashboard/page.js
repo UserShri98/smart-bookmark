@@ -89,6 +89,7 @@ useEffect(()=>{
     if(!error){
       setTitle("");
       setUrl("");
+      await fetchBookmarks();
     }else{
       console.error(error);
     }
@@ -96,6 +97,7 @@ useEffect(()=>{
 
   const deleteBookmark=async(id)=>{
     await supabase.from("bookmarks").delete().eq("id", id);
+    await fetchBookmarks();
   };
 
   const subscribeToChanges=()=>{
