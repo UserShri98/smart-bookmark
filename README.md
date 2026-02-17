@@ -1,36 +1,9 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+* Problems I faced and how did I solved them:-
 
-## Getting Started
+- Real-time updates not working on Vercel: Bookmarks weren't updating across tabs without page reload when deployed.Added manual `fetchBookmarks()`calls after add/delete operations as a fallback and configured Supabase Realtime properly by enabling replication on the bookmarks table.
 
-First, run the development server:
+-  WebSocket authentication failures: Got "HTTP Authentication failed" errors for WebSocket connections. Fixed by adding `.trim()`to environment variables to remove trailing newlines/whitespace that were breaking the API key, and ensured Vercel environment variables were set correctly without extra characters.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+-  Add bookmark button not working: The `supabase.auth.getUser()` call was timing out on Vercel's serverless environment. Initially tried switching to `getSession()`but ultimately kept `getUser()`and added proper error handling plus manual UI refresh calls to ensure bookmarks appear immediately regardless of async issues.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+-  UI not updating after operations: Changes only appeared after page reload.Solved by calling `await fetchBookmarks()` immediately after successful insert/delete operations,ensuring instant UI feedback without relying solely on real-time subscriptions. 
